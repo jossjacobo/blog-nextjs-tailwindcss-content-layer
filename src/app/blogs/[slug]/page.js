@@ -2,11 +2,59 @@ import { allBlogs } from "@/.contentlayer/generated";
 import BlogDetails from "@/src/components/blog/blog-details";
 import RenderMdx from "@/src/components/blog/render-mdx";
 import Tag from "@/src/components/elements/tag";
+import siteMetadata from "@/src/utils/site-meta-data";
 import { slug } from "github-slugger";
 import Image from "next/image";
 
 export async function generateStaticParams() {
   return allBlogs.map((blog) => ({ slug: blog._raw.flattenedPath }));
+}
+
+export async function generateMetadata({ params }) {
+  const blog = allBlogs.find((blog) => blog._raw.flattenedPath === params.slug);
+  if (!blog) {
+    return;
+  }
+  const { title, description, url, publishedAt, updatedAt } = blog;
+  const publishedTime = new Date(publishedAt).toISOString();
+  const modifiedTime = new Date(updatedAt || publishedAt).toISOString();
+
+  let imagelist = [siteMetadata.socialBanner];
+  if (blog.image) {
+    imagelist =
+      typeof blog.image.filePath === "string"
+        ? [siteMetadata.siteUrl + blog.image.filePath.replace("../public", "")]
+        : [blog.image];
+  }
+  const ogImages = imagelist.map((img) => {
+    return { url: img.includes("http") ? img : siteMetadata.siteUrl + img };
+  });
+
+  const authors = blog?.author ? [blog.author] : siteMetadata.author;
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: siteMetadata.siteUrl + url,
+      siteName: siteMetadata.title,
+      locale: "en_US",
+      type: "article",
+      publishedTime,
+      modifiedTime,
+      images: ogImages,
+      locale: "en_US",
+      type: "website",
+      authors: authors.length > 0 ? authors : [siteMetadata.author],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ogImages,
+    },
+  };
 }
 
 export default function BlogPage({ params }) {
