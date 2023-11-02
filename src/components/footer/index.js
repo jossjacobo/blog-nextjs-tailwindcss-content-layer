@@ -11,7 +11,9 @@ const Footer = () => {
     formState: { errors },
   } = useForm();
   const onSubmit = (data) => console.log(data);
-  console.log(errors);
+  if (errors && Object.keys(errors).length > 0) {
+    console.log(errors);
+  }
 
   return (
     <>
