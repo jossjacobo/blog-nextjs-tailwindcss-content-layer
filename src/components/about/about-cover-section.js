@@ -13,6 +13,8 @@ const AboutCoverSection = () => {
           src={profileCharacter}
           atl="CodeBucksCharacterName"
           className="w-full h-full object-contain object-center"
+          priority
+          sizes="(max-width: 768px) 100vw, (max-width: 1180px) 50vw, 50vw"
         />
       </div>
       <div className="w-1/2 flex flex-col text-left items-start justify-center px-16">

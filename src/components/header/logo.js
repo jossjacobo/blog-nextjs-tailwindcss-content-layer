@@ -10,6 +10,7 @@ const Logo = () => {
           src={profileImage}
           alt="CodeBucks"
           className="w-full h-auto rounded-full"
+          sizes="33vw"
           priority
         />
       </div>
